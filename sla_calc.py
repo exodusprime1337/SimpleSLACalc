@@ -307,7 +307,7 @@ class SimpleSLACalc:
 
     def exclude_custom_dates(self, start_time: pendulum.DateTime) -> pendulum.DateTime:
         """Helper function to check currently supplied date against a
-        list of exluded dates for sla calculations
+        list of excluded dates for sla calculations
 
         Args:
             start_time (pendulum.DateTime): Current DateTime object
