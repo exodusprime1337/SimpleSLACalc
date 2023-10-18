@@ -19,7 +19,7 @@ To calculate and SLA you need to provide a minimum set of parameters.
 **NOTE: Only provide one sla_hours, sla_days, or sla_weeks. Do not combine**
 
 Additionally you can provide a number of optional parmeters to fine tune your SLA calculations. 
-Most notable here is **skip_business_hours**. Adding this with ignore open/close hours as well has holidays and excluded dates. It will return only the raw SLA calculation including weekends, and holidays.
+Most notable here is **skip_business_hours**. By default business hours are ignored. It will return only the raw SLA calculation including weekends, and holidays. To only calculate business hours SLA's, set to False.
 - skip_business_hours (Optional[bool]): When True, skips business hours, and just calculates raw SLA. Defaults to True.
 - excluded_dates (Optional[list[str]], optional): Provide a list of dates in string format(IE: ["2023-10-1", 2023-10-02"]). Defaults to None.
 - holiday_country (Optional[str], optional): Two character country code for holiday parsing. Required for holiday date SLA exclusion. Defaults to None.
