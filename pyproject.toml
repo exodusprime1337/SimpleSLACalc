@@ -1,0 +1,14 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "SimpleSLACalc"
+version = "0.0.1"
+authors = [
+  { name="Kenny Sambrook", email="kenny@krstek.com" },
+]
+description = "A simple SLA Calculator"
+[project.urls]
+"Homepage" = "https://github.com/exodusprime1337/SimpleSLACalc"
+"Bug Tracker" = "https://github.com/exodusprime1337/SimpleSLACalc/issues"

@@ -1,0 +1,4 @@
+graft SimpleSLACalc
+include pyproject.toml
+include setup.pyproject
+global-exclude *.py[cod]

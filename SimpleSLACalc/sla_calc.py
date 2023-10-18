@@ -36,7 +36,7 @@ class SLAItem:
         return str(self.sla_expiration_time)
 
 
-class SimpleSLACalc:
+class SLACalculator:
     def __init__(self):
         pass
 
