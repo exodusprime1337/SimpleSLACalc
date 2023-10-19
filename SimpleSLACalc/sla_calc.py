@@ -6,6 +6,8 @@ import holidays as pyholidays
 import pendulum
 from dateutil import tz
 
+from .exceptions import InvalidCustomDateList, InvalidDateObject, NoSLACounterItems, ToManySLACounterItems
+
 
 @dataclass(frozen=True, order=False)
 class SLAItem:
@@ -84,7 +86,7 @@ class SLACalculator:
             BusinessSLAItem: Class item containing results of sla calculation
         """
         if sla_hours and sla_days and sla_weeks:
-            raise ValueError("Please provide one or the other and not both")
+            raise ToManySLACounterItems("Please provide sla_hours, or sla_days, or sla_weeks. No more than one.")
         if sla_hours:
             self.sla_mins = self.convert_sla_time_to_mins(sla_time=sla_hours, sla_type="hours")
         elif sla_days:
@@ -92,7 +94,7 @@ class SLACalculator:
         elif sla_weeks:
             self.sla_mins = self.convert_sla_time_to_mins(sla_time=sla_weeks, sla_type="weeks")
         else:
-            raise ValueError("you did not provide a matching SLA timeframe")
+            raise NoSLACounterItems("You did not provide a matching SLA timeframe")
         self.open_hour = open_hour
         self.close_hour = close_hour
         self.time_zone = time_zone
@@ -140,7 +142,7 @@ class SLACalculator:
             return self.find_sla_time(start_time=start_time)
 
     def check_start_time_date_variables(self, start_time: pendulum.DateTime):
-        """Wrapper function to separate optional SLA calculations such as
+        """Wrapper function to adjust start time forf optional SLA calculations such as
         holidays, and excluded days
 
         Args:
@@ -205,7 +207,6 @@ class SLACalculator:
                 second=0,
                 tz=pendulum.timezone(self.time_zone),
             )
-
         return start_time
 
     def check_for_holidays(self, start_time: pendulum.DateTime) -> pendulum.DateTime:
@@ -321,9 +322,15 @@ class SLACalculator:
         if not self.excluded_dates:
             return start_time
         if not isinstance(self.excluded_dates, list):
-            raise ValueError("Exclude dates must be in list form with string dates in format 'YYYY-MM-DD")
+            raise InvalidCustomDateList("Exclude dates must be in list form with string dates in format 'YYYY-MM-DD")
 
         exlude_date_list: list = self.convert_string_exlude_date_to_datetime(exlude_dates=self.excluded_dates)
         if pendulum.date(year=start_time.year, month=start_time.month, day=start_time.day).to_date_string() in exlude_date_list:
             return start_time.add(days=1)
         return start_time
+
+    def validate_excluded_dates(self, excluded_date: str) -> None:
+        try:
+            datetime.strptime(excluded_date, "%Y-%m-%d")
+        except ValueError:
+            raise InvalidDateObject(f"The date {excluded_date}, is not formatted properly. It should be formatted as such: 'YYYY-MM-DD'")
