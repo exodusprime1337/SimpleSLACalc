@@ -4,7 +4,7 @@ A very simple and rudimentary SLA timeframe calculator.
 ## Installation
 NOTE: While in the test repository, required packages may not be available. 
 ```
-pip install -i https://test.pypi.org/simple/ SimpleSLACalc==0.0.1
+pip install -i https://test.pypi.org/simple/ SimpleSLACalc==0.0.3
 ```
 ## Usage
 To calculate and SLA you need to provide a minimum set of parameters. 
