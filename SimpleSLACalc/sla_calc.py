@@ -323,13 +323,23 @@ class SLACalculator:
             return start_time
         if not isinstance(self.excluded_dates, list):
             raise InvalidCustomDateList("Exclude dates must be in list form with string dates in format 'YYYY-MM-DD")
-
+        for custom_date in self.excluded_dates:
+            self.validate_excluded_date(excluded_date=custom_date)
         exlude_date_list: list = self.convert_string_exlude_date_to_datetime(exlude_dates=self.excluded_dates)
         if pendulum.date(year=start_time.year, month=start_time.month, day=start_time.day).to_date_string() in exlude_date_list:
             return start_time.add(days=1)
         return start_time
 
-    def validate_excluded_dates(self, excluded_date: str) -> None:
+    def validate_excluded_date(self, excluded_date: str) -> None:
+        """
+        Checks the ecluded date objects for validity.
+
+        Args:
+            excluded_date (str): Custom date str
+
+        Raises:
+            InvalidDateObject: Raised if date object is invalid.
+        """
         try:
             datetime.strptime(excluded_date, "%Y-%m-%d")
         except ValueError:
