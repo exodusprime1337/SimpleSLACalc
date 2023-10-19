@@ -2,12 +2,11 @@
 A very simple and rudimentary SLA timeframe calculator. 
 
 ## Installation
-NOTE: While in the test repository, required packages may not be available. 
 ```
-pip install -i https://test.pypi.org/simple/ SimpleSLACalc==0.0.3
+pip install SimpleSLACalc
 ```
 ## Usage
-To calculate and SLA you need to provide a minimum set of parameters. 
+To calculate an SLA you need to provide a minimum set of parameters. 
 - start_time (datetime | pendulum.DateTime | str): Start of sla time calculation(IE: "2023-10-01") or a datetime object
 - open_hour (int): Start of business hour(24h format)
 - close_hour (int): End of business hour(24h format)
@@ -18,7 +17,7 @@ To calculate and SLA you need to provide a minimum set of parameters.
 
 **NOTE: Only provide one sla_hours, sla_days, or sla_weeks. Do not combine**
 
-Additionally you can provide a number of optional parmeters to fine tune your SLA calculations. 
+Additionally you can provide a number of optional parameters to fine tune your SLA calculations. 
 Most notable here is **skip_business_hours**. By default business hours are ignored. It will return only the raw SLA calculation including weekends, and holidays. To only calculate business hours SLA's, set to False.
 - skip_business_hours (Optional[bool]): When True, skips business hours, and just calculates raw SLA. Defaults to True.
 - excluded_dates (Optional[list[str]], optional): Provide a list of dates in string format(IE: ["2023-10-1", 2023-10-02"]). Defaults to None.
