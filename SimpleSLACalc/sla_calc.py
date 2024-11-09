@@ -6,7 +6,12 @@ import holidays as pyholidays
 import pendulum
 from dateutil import tz
 
-from .exceptions import InvalidCustomDateList, InvalidDateObject, NoSLACounterItems, ToManySLACounterItems
+from .exceptions import (
+    InvalidCustomDateList,
+    InvalidDateObject,
+    NoSLACounterItems,
+    ToManySLACounterItems,
+)
 
 
 @dataclass(frozen=True, order=False)
@@ -46,10 +51,12 @@ class SLACalculator:
         self,
         start_time: datetime | pendulum.DateTime | str,
         open_hour: int,
+        open_minute: int,
         close_hour: int,
+        close_minute: int,
         time_zone: str,
         skip_business_hours: Optional[bool] = True,
-        sla_hours: Optional[int] = None,
+        sla_hours: Optional[float] = None,
         sla_days: Optional[int] = None,
         sla_weeks: Optional[int] = None,
         excluded_dates: Optional[list[str]] = None,
@@ -67,6 +74,7 @@ class SLACalculator:
         Args:
             start_time (datetime | pendulum.DateTime | str): Start of sla time calculation(IE: "2023-10-01") or a datetime object
             open_hour (int): Start of business hour(24h format)
+            open_minute (int): Start of business minute
             close_hour (int): End of business hour(24h format)
             time_zone (str): Timezone in which to process calculation
             skip_business_hours (Optional[bool]): When True, skips business hours, and just calculates raw SLA. Defaults to True.
@@ -96,7 +104,9 @@ class SLACalculator:
         else:
             raise NoSLACounterItems("You did not provide a matching SLA timeframe")
         self.open_hour = open_hour
+        self.open_minute = open_minute
         self.close_hour = close_hour
+        self.close_minute = close_minute
         self.time_zone = time_zone
         self.skip_business_hours = skip_business_hours
         self.excluded_dates = excluded_dates
@@ -156,15 +166,15 @@ class SLACalculator:
             start_time = self.check_for_holidays(start_time=start_time)
         if self.excluded_dates:
             start_time = self.exclude_custom_dates(start_time=start_time)
-        open_time = self.calculate_open_and_close_times(sla_start_time=start_time, hour_of_day=self.open_hour)
-        close_time = self.calculate_open_and_close_times(sla_start_time=start_time, hour_of_day=self.close_hour)
+        open_time = self.calculate_open_and_close_times(
+            sla_start_time=start_time, hour_of_day=self.open_hour, minute_of_day=self.open_minute
+        )
+        close_time = self.calculate_open_and_close_times(
+            sla_start_time=start_time, hour_of_day=self.close_hour, minute_of_day=self.close_minute
+        )
         return start_time, open_time, close_time
 
-    def calculate_open_and_close_times(
-        self,
-        sla_start_time: pendulum.DateTime,
-        hour_of_day: int,
-    ):
+    def calculate_open_and_close_times(self, sla_start_time: pendulum.DateTime, hour_of_day: int, minute_of_day: int):
         """Takes in the target hour of the day(24h) and returns a
         datetime object with the minutes and hour replaced with the provided
         "hour of the day"
@@ -181,7 +191,7 @@ class SLACalculator:
             month=sla_start_time.month,
             day=sla_start_time.day,
             hour=hour_of_day,
-            minute=0,
+            minute=minute_of_day,
             second=0,
             tz=pendulum.timezone(self.time_zone),
         )
@@ -231,13 +241,17 @@ class SLACalculator:
         else:
             holiday_province = None
         holidays = list(
-            pyholidays.CountryHoliday(country=self.holiday_country, years=[start_time.year], prov=holiday_province, state=holiday_state).keys()
+            pyholidays.CountryHoliday(
+                country=self.holiday_country, years=[start_time.year], prov=holiday_province, state=holiday_state
+            ).keys()
         )
         while pendulum.date(year=start_time.year, month=start_time.month, day=start_time.day) in holidays:
             start_time = start_time.add(days=1)
         return start_time
 
-    def validate_or_convert_pendulum_datetime(self, datetime_object: datetime | pendulum.DateTime | str, timezone: str) -> pendulum.DateTime:
+    def validate_or_convert_pendulum_datetime(
+        self, datetime_object: datetime | pendulum.DateTime | str, timezone: str
+    ) -> pendulum.DateTime:
         """Quick and dirty validation of the provided base datetime object. If it
         is a str or datetime type it will be converted to a pendulum.DateTime
         object and returned
@@ -299,12 +313,12 @@ class SLACalculator:
         """
         sla_mins = 0
         if sla_type == "hours":
-            sla_mins = sla_time * 60
+            sla_mins = sla_time * 60  # Convert hours to minutes, ensuring int result
         elif sla_type == "days":
-            sla_mins = sla_time * 24 * 60
+            sla_mins = sla_time * 24 * 60  # Convert days to minutes
         elif sla_type == "weeks":
-            sla_mins = sla_time * 7 * 24 * 60
-        return sla_mins
+            sla_mins = sla_time * 7 * 24 * 60  # Convert weeks to minutes
+        return int(sla_mins)
 
     def exclude_custom_dates(self, start_time: pendulum.DateTime) -> pendulum.DateTime:
         """Helper function to check currently supplied date against a
@@ -326,7 +340,10 @@ class SLACalculator:
         for custom_date in self.excluded_dates:
             self.validate_excluded_date(excluded_date=custom_date)
         exlude_date_list: list = self.convert_string_exlude_date_to_datetime(exlude_dates=self.excluded_dates)
-        if pendulum.date(year=start_time.year, month=start_time.month, day=start_time.day).to_date_string() in exlude_date_list:
+        if (
+            pendulum.date(year=start_time.year, month=start_time.month, day=start_time.day).to_date_string()
+            in exlude_date_list
+        ):
             return start_time.add(days=1)
         return start_time
 
@@ -343,4 +360,6 @@ class SLACalculator:
         try:
             datetime.strptime(excluded_date, "%Y-%m-%d")
         except ValueError:
-            raise InvalidDateObject(f"The date {excluded_date}, is not formatted properly. It should be formatted as such: 'YYYY-MM-DD'")
+            raise InvalidDateObject(
+                f"The date {excluded_date}, is not formatted properly. It should be formatted as such: 'YYYY-MM-DD'"
+            )
