@@ -9,7 +9,9 @@ pip install SimpleSLACalc
 To calculate an SLA you need to provide a minimum set of parameters. 
 - start_time (datetime | pendulum.DateTime | str): Start of sla time calculation(IE: "2023-10-01") or a datetime object
 - open_hour (int): Start of business hour(24h format)
+- open_minute (int): Start of business minute
 - close_hour (int): End of business hour(24h format)
+- close_minute (int): End of business minute
 - time_zone (str): Timezone in which to process calculation
 - sla_hours (Optional[int], optional): Provide hours to calculate SLA in hours. Defaults to None.
 - sla_days (Optional[int], optional): Provide days to calculate SLA in days. Defaults to None.

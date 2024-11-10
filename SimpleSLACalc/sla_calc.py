@@ -76,6 +76,7 @@ class SLACalculator:
             open_hour (int): Start of business hour(24h format)
             open_minute (int): Start of business minute
             close_hour (int): End of business hour(24h format)
+            close_minute (int): End of business minute
             time_zone (str): Timezone in which to process calculation
             skip_business_hours (Optional[bool]): When True, skips business hours, and just calculates raw SLA. Defaults to True.
             sla_hours (Optional[int], optional): Provide hours to calculate SLA in hours. Defaults to None.
