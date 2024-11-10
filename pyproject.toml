@@ -1,14 +1,26 @@
-[build-system]
-requires = ["setuptools>=61.0"]
-build-backend = "setuptools.build_meta"
-
 [project]
-name = "SimpleSLACalc"
-version = "0.0.4"
-authors = [
-  { name="Kenny Sambrook", email="kenny@krstek.com" },
+name = "simpleslacalc"
+version = "0.0.5"
+description = "Simple SLA Calculator"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = ["holidays>=0.60", "pendulum>=3.0.0"]
+authors = [{ name = "Kenny Sambrook", email = "kenny@krstek.com" }]
+license = { text = "MIT License" }
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "License :: Freely Distributable",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development",
+    "Topic :: Utilities",
 ]
-description = "A simple SLA Calculator"
+keywords = ["sla", "service level agreement", "time", "timer", "calculator"]
+
 [project.urls]
 "Homepage" = "https://github.com/exodusprime1337/SimpleSLACalc"
 "Bug Tracker" = "https://github.com/exodusprime1337/SimpleSLACalc/issues"

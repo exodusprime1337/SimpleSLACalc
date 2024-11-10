@@ -1,13 +1,13 @@
+# Python-generated files
 __pycache__/
-*.py[cod]
-test.py
-venv/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
 
-# Compiled python modules.
-*.py[cod]
+# Virtual environments
+.venv
 
-# Setuptools distribution folder.
-/dist/
-
-# Python egg metadata, regenerated from source files by setuptools.
-/*.egg-info
+# Misc files
+.DS_Store

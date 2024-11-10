@@ -1,7 +1,0 @@
-holidays==0.35
-pendulum==3.0.0b1
-python-dateutil==2.8.2
-pytzdata==2020.1
-six==1.16.0
-time-machine==2.13.0
-tzdata==2023.3
