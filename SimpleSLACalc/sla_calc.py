@@ -51,9 +51,7 @@ class SLACalculator:
         self,
         start_time: datetime | pendulum.DateTime | str,
         open_hour: int,
-        open_minute: int,
         close_hour: int,
-        close_minute: int,
         time_zone: str,
         skip_business_hours: Optional[bool] = True,
         sla_hours: Optional[float] = None,
@@ -63,6 +61,8 @@ class SLACalculator:
         holiday_country: Optional[str] = None,
         holiday_state: Optional[str] = None,
         holiday_province: Optional[str] = None,
+        open_minute: Optional[int] = 0,
+        close_minute: Optional[int] = 0,
     ) -> SLAItem:
         """Calculate SLA times based on open and close business hours(24 hour format).
         Optionally add Country(IE: "US"), state(IE:TX), or province to calculate SLA's
